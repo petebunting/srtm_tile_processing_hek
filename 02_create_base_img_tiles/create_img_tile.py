@@ -17,8 +17,8 @@ class CreateImageTile(PBPTQProcessTool):
         wkt_str = rsgis_utils.getWKTFromEPSGCode(4326)
         os.environ["RSGISLIB_IMG_CRT_OPTS_GTIFF"] = "TILED=YES:COMPRESS=LZW"
         pxl_res = 0.000277777777778
-        width = (self.params['xmax'] - self.params['xmin']) / pxl_res
-        height = (self.params['ymax'] - self.params['ymin']) / pxl_res
+        width = int((self.params['xmax'] - self.params['xmin']) / pxl_res)
+        height = int((self.params['ymax'] - self.params['ymin']) / pxl_res)
         rsgislib.imageutils.createBlankImage(self.params['out_img'], 1, width, height, self.params['xmin'], self.params['ymax'], pxl_res, 0, None, wkt_str, 'GTIFF', rsgislib.TYPE_8UINT)
         rsgislib.imageutils.popImageStats(self.params['out_img'], usenodataval=False, nodataval=0, calcpyramids=False)
 
