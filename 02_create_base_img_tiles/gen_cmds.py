@@ -45,7 +45,8 @@ class GenCmds(PBPTGenQProcessToolCmds):
         self.pop_params_db()
         self.create_slurm_sub_sh("gmw_v3_ext_tif", 16448, '/scratch/a.pfb/gmw_v3_change/logs',
                                  run_script='run_exe_analysis.sh', job_dir="job_scripts",
-                                 db_info_file=None, account_name='scw1376', n_cores_per_job=10, n_jobs=10,
+                                 db_info_file='lcl_db_process_info.txt', 
+                                 n_cores_per_job=10, n_xtr_cmds=10, n_jobs=10,
                                  job_time_limit='2-23:59',
                                  module_load='module load parallel singularity\n\n')
 
