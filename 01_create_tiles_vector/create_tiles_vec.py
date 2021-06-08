@@ -145,7 +145,10 @@ A function which creates a regular grid across a defined area.
     writeVecColumn(outputVec, vecLyrName, tile_names_col, ogr.OFTString, tile_names)
 
 
-#createWGS84VectorGrid('srtm_overlap_tiles.gpkg', 'GPKG', 'srtm_tiles', 1, 1, [-180, 180, -56, 60], overlap=0.0277777778, tile_name_prefix='srtm_')
-popBBOXCols('srtm_overlap_tiles.gpkg', 'srtm_tiles', xminCol='xmin', xmaxCol='xmax', yminCol='ymin', ymaxCol='ymax')
+createWGS84VectorGrid('../../srtm_overlap_tiles.gpkg', 'GPKG', 'srtm_tiles', 1, 1, [-180, 180, -56, 60], overlap=0.0277777778, tile_name_prefix='srtm_')
+popBBOXCols('../../srtm_overlap_tiles.gpkg', 'srtm_tiles', xminCol='xmin', xmaxCol='xmax', yminCol='ymin', ymaxCol='ymax')
+
+createWGS84VectorGrid('../../srtm_tiles.gpkg', 'GPKG', 'srtm_tiles', 1, 1, [-180, 180, -56, 60], tile_name_prefix='srtm_')
+popBBOXCols('../../srtm_tiles.gpkg', 'srtm_tiles', xminCol='xmin', xmaxCol='xmax', yminCol='ymin', ymaxCol='ymax')
 
 
