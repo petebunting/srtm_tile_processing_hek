@@ -40,7 +40,7 @@ class GenCmds(PBPTGenQProcessToolCmds):
     def run_gen_commands(self):
         self.gen_command_info(vec_file='/scratch/a.hek4/srtm/srtm_overlap_tiles.gpkg',
                               vec_lyr='srtm_tiles',
-                              out_dir='/scratch/a.hek4/srtm/base_tiles')
+                              out_dir='/scratch/a.hek4/srtm/base_overlap_tiles')
 
         self.pop_params_db()
         self.create_slurm_sub_sh("create_base_tiles", 16448, '/scratch/a.hek4/srtm/logs',
