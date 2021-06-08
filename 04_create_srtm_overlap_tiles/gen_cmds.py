@@ -23,7 +23,7 @@ class GenCmds(PBPTGenQProcessToolCmds):
             if not os.path.exists(out_cmp_file):
 
                 c_dict = dict()
-                c_dict['base_img'] = kwargs['tile_img']
+                c_dict['base_img'] = tile_img
                 c_dict['srtm_img'] = kwargs['srtm_img']
                 c_dict['out_img'] = out_img
                 c_dict['out_cmp_file'] = out_cmp_file
