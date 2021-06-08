@@ -23,17 +23,22 @@ class GenCmds(PBPTGenQProcessToolCmds):
             if not os.path.exists(out_cmp_file):
 
                 c_dict = dict()
+                c_dict['basename'] = basename
                 c_dict['base_img'] = tile_img
                 c_dict['srtm_img'] = kwargs['srtm_img']
                 c_dict['out_img'] = out_img
                 c_dict['out_cmp_file'] = out_cmp_file
+                c_dict['tmp_dir'] = os.path.join(kwargs['tmp_dir'], "{}_gen_tile".format(basename))
+                if not os.path.exists(c_dict['tmp_dir']):
+                    os.mkdir(c_dict['tmp_dir'])
                 self.params.append(c_dict)
 
 
     def run_gen_commands(self):
         self.gen_command_info(tiles_srch='/scratch/a.hek4/srtm/base_overlap_tiles/*.tif',
                               srtm_img='/scratch/a.hek4/srtm/srtm_global_mosaic_1arc_v3.kea',
-                              out_dir='/scratch/a.hek4/srtm/srtm_overlap_tiles')
+                              out_dir='/scratch/a.hek4/srtm/srtm_overlap_tiles',
+                              tmp_dir='/scratch/a.hek4/srtm/tmp')
 
         self.pop_params_db()
         self.create_slurm_sub_sh("create_srtm_overlap_tiles", 16448, '/scratch/a.hek4/srtm/logs',
