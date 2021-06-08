@@ -31,9 +31,9 @@ class GenCmds(PBPTGenQProcessToolCmds):
 
 
     def run_gen_commands(self):
-        self.gen_command_info(tiles_srch='/scratch/a.hek4/srtm/base_tiles/*.tif',
+        self.gen_command_info(tiles_srch='/scratch/a.hek4/srtm/base_overlap_tiles/*.tif',
                               srtm_img='/scratch/a.hek4/srtm/srtm_global_mosaic_1arc_v3.kea',
-                              out_dir='/scratch/a.hek4/srtm/base_tiles')
+                              out_dir='/scratch/a.hek4/srtm/srtm_overlap_tiles')
 
         self.pop_params_db()
         self.create_slurm_sub_sh("create_base_tiles", 16448, '/scratch/a.hek4/srtm/logs',
