@@ -36,7 +36,7 @@ class GenCmds(PBPTGenQProcessToolCmds):
                               out_dir='/scratch/a.hek4/srtm/srtm_overlap_tiles')
 
         self.pop_params_db()
-        self.create_slurm_sub_sh("create_base_tiles", 16448, '/scratch/a.hek4/srtm/logs',
+        self.create_slurm_sub_sh("create_srtm_overlap_tiles", 16448, '/scratch/a.hek4/srtm/logs',
                                  run_script='run_exe_analysis.sh', job_dir="job_scripts",
                                  db_info_file='lcl_db_process_info.txt', 
                                  n_cores_per_job=10, n_xtr_cmds=10, n_jobs=10,

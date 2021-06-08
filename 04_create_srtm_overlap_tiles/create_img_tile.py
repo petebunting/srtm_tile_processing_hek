@@ -15,7 +15,7 @@ class CreateImageTile(PBPTQProcessTool):
         super().__init__(cmd_name='create_img_tile.py', descript=None)
 
     def do_processing(self, **kwargs):
-        rsgislib.imageutils.resampleImage2Match(self.params['base_img'], self.params['srtm_img'], self.params['out_img'], 'GTIFF', 'nearestneighbour', datatype=rsgislib.TYPE_16INT, noDataVal=-32768, multicore=False)
+        rsgislib.imageutils.resampleImage2Match(self.params['base_img'], self.params['srtm_img'], self.params['out_img'], 'GTIFF', 'cubicspline', datatype=rsgislib.TYPE_16INT, noDataVal=-32768, multicore=False)
         
         band_defns = [rsgislib.imagecalc.BandDefn('srtm', self.params['out_img'], 1)]
         prop_valid = rsgislib.imagecalc.calcPropTrueExp('(srtm>-500)&&(srtm<10000?1:0', band_defns)
