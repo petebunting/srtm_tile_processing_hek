@@ -19,7 +19,7 @@ class CreateImageTile(PBPTQProcessTool):
         pxl_res = 0.000277777777778
         width = int((self.params['xmax'] - self.params['xmin']) / pxl_res)
         height = int((self.params['ymax'] - self.params['ymin']) / pxl_res)
-        rsgislib.imageutils.createBlankImage(self.params['out_img'], 1, width, height, self.params['xmin'], self.params['ymax'], pxl_res, 0, None, wkt_str, 'GTIFF', rsgislib.TYPE_8UINT)
+        rsgislib.imageutils.createBlankImage(self.params['out_img'], 1, width, height, self.params['xmin'], self.params['ymax'], pxl_res, 0, "", wkt_str, 'GTIFF', rsgislib.TYPE_8UINT)
         rsgislib.imageutils.popImageStats(self.params['out_img'], usenodataval=False, nodataval=0, calcpyramids=False)
 
     def required_fields(self, **kwargs):
