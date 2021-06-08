@@ -26,8 +26,7 @@ class CreateImageTile(PBPTQProcessTool):
         print("Check if there is valid data within the SRTM tile")     
         #tmp_valid_data_img = os.path.join(self.params['tmp_dir'], "{}_vld_data.tif".format(self.params['basename']))
         band_defns = [rsgislib.imagecalc.BandDefn('srtm', self.params['out_img'], 1)]
-        
-        prop_vld = rsgislib.imagecalc.calcPropTrueExp('(srtm>-500)&&(srtm<9000?1:0', band_defns)
+        prop_vld = rsgislib.imagecalc.calcPropTrueExp('(srtm>-500)&&(srtm<9000)?1:0', band_defns)
         
         #rsgislib.imagecalc.bandMath(tmp_valid_data_img, '(srtm>-500)&&(srtm<9000?1:0', 'GTIFF', rsgislib.TYPE_8UINT, band_defns)
         #vld_count = rsgislib.imagecalc.countPxlsOfVal(tmp_valid_data_img, vals=[1])
