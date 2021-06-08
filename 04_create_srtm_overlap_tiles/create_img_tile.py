@@ -15,15 +15,18 @@ class CreateImageTile(PBPTQProcessTool):
         super().__init__(cmd_name='create_img_tile.py', descript=None)
 
     def do_processing(self, **kwargs):
+        print("Creating SRTM tile")
         rsgislib.imageutils.resampleImage2Match(self.params['base_img'], self.params['srtm_img'], self.params['out_img'], 'GTIFF', 'cubicspline', datatype=rsgislib.TYPE_16INT, noDataVal=-32768, multicore=False)
-        
+        print("Check if there is valid data within the SRTM tile")
         band_defns = [rsgislib.imagecalc.BandDefn('srtm', self.params['out_img'], 1)]
-        prop_valid = rsgislib.imagecalc.calcPropTrueExp('(srtm>-500)&&(srtm<10000?1:0', band_defns)
+        prop_valid = rsgislib.imagecalc.calcPropTrueExp('(srtm>-500)&&(srtm<9000?1:0', band_defns)
         if prop_valid > 0:
+            print("There is valid data - calc stats")
             rsgislib.imageutils.popImageStats(self.params['out_img'], usenodataval=True, nodataval=-32768, calcpyramids=False)
         else:
+            print("There is not any valid data - remove image")
             os.remove(self.params['out_img'])
-            
+        print("Finished")
         pathlib.Path(self.params['out_cmp_file']).touch()
         
 
