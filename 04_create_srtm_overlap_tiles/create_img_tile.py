@@ -34,7 +34,7 @@ class CreateImageTile(PBPTQProcessTool):
         if vld_count[0] > 0:
             #if prop_vld > 0:
             print("There is valid data - calc stats")
-            rsgislib.imageutils.popImageStats(self.params['out_img'], usenodataval=True, nodataval=-32768, calcpyramids=False)
+            rsgislib.imageutils.popImageStats(self.params['out_img'], usenodataval=True, nodataval=-32768, calcpyramids=True)
         else:
             print("There is not any valid data - remove image")
             os.remove(self.params['out_img'])
