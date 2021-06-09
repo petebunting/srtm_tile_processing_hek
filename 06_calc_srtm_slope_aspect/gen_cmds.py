@@ -10,8 +10,10 @@ logger = logging.getLogger(__name__)
 class GenCmds(PBPTGenQProcessToolCmds):
 
     def gen_command_info(self, **kwargs):
-        if not os.path.exists(kwargs['out_dir']):
-            os.mkdir(kwargs['out_dir'])
+        if not os.path.exists(kwargs['out_asp_dir']):
+            os.mkdir(kwargs['out_asp_dir'])
+        if not os.path.exists(kwargs['out_slp_dir']):
+            os.mkdir(kwargs['out_slp_dir'])
                 
         base_tiles = glob.glob(kwargs['tiles_srch'])
 
