@@ -36,7 +36,7 @@ class GenCmds(PBPTGenQProcessToolCmds):
 
     def run_gen_commands(self):
         self.gen_command_info(tiles_srch='/scratch/a.hek4/srtm/base_overlap_tiles/*.tif',
-                              srtm_img='/scratch/a.hek4/srtm/srtm_global_mosaic_1arc_v3.kea',
+                              srtm_img='/scratch/a.hek4/srtm/srtm_raw_tiles/srtm_global_mosaic_1arc_v3.vrt',
                               out_dir='/scratch/a.hek4/srtm/srtm_overlap_tiles',
                               tmp_dir='/scratch/a.hek4/srtm/tmp')
 

@@ -26,7 +26,7 @@ def zero_pad_num_str(num_val, str_len=3, round_num=False, round_n_digts=0, integ
     return num_str
     
 
-def create_latlon_name(x_col_val, y_col_val, prefix='', postfix='', latlong=True, int_coords=True, zero_x_pad=0, zero_y_pad=0, non_neg=True):
+def create_latlon_name(x_col_val, y_col_val, prefix='', postfix='', latlong=True, int_coords=True, zero_x_pad=3, zero_y_pad=2, non_neg=True):
     """
     
     """
