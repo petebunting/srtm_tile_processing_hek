@@ -18,7 +18,7 @@ class CreateImageTile(PBPTQProcessTool):
         os.environ["RSGISLIB_IMG_CRT_OPTS_GTIFF"] = "TILED=YES:COMPRESS=LZW"
         pxl_res = 0.000277777777778
         width = int((self.params['xmax'] - self.params['xmin']) / pxl_res) + 1
-        height = int((self.params['ymax'] - self.params['ymin']) / pxl_res) + 2
+        height = int((self.params['ymax'] - self.params['ymin']) / pxl_res) + 1
         rsgislib.imageutils.createBlankImage(self.params['out_img'], 1, width, height, self.params['xmin'], self.params['ymax'], pxl_res, 0, "", wkt_str, 'GTIFF', rsgislib.TYPE_8UINT)
         rsgislib.imageutils.popImageStats(self.params['out_img'], usenodataval=False, nodataval=0, calcpyramids=False)
 
