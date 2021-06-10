@@ -6,6 +6,7 @@ import pathlib
 import rsgislib
 import rsgislib.imageutils
 import rsgislib.elevation
+import subprocess
 
 logger = logging.getLogger(__name__)
 
@@ -18,8 +19,10 @@ class CreateImageTile(PBPTQProcessTool):
         os.environ["RSGISLIB_IMG_CRT_OPTS_GTIFF"] = "TILED=YES:COMPRESS=LZW"
     
         print("Calculate SRTM Slope")
-        rsgislib.elevation.slope(self.params['srtm_img'], self.params['out_slope_img'], 'degrees', 'GTIFF')
-        rsgislib.imageutils.popImageStats(self.params['out_slope_img'], usenodataval=False, nodataval=-32768, calcpyramids=True)
+        #rsgislib.elevation.slope(self.params['srtm_img'], self.params['out_slope_img'], 'degrees', 'GTIFF')
+        cmd = 'gdaldem slope -of GTIFF -co "TILED=YES" -co "COMPRESS=LZW" -s 111120 -compute_edges {} {}'.format(self.params['srtm_img'], self.params['out_slope_img'])
+        subprocess.call(cmd, shell=True)
+        rsgislib.imageutils.popImageStats(self.params['out_slope_img'], usenodataval=True, nodataval=-9999, calcpyramids=True)
         
         print("Calculate SRTM Aspect")
         rsgislib.elevation.aspect(self.params['srtm_img'], self.params['out_aspect_img'], 'GTIFF')

@@ -42,7 +42,7 @@ class GenCmds(PBPTGenQProcessToolCmds):
         self.gen_command_info(tiles_srch='/scratch/a.hek4/srtm/srtm_overlap_tiles/*.tif',
                               nooverlap_base='/scratch/a.hek4/srtm/base_nooverlap_tiles',
                               asp_dir='/scratch/a.hek4/srtm/srtm_aspect_overlap_tiles',
-                              slp_dir='/scratch/a.hek4/srtm/srtm_slope_overlap_tiles'
+                              slp_dir='/scratch/a.hek4/srtm/srtm_slope_overlap_tiles',
                               out_asp_dir='/scratch/a.hek4/srtm/srtm_aspect_nooverlap_tiles',
                               out_slp_dir='/scratch/a.hek4/srtm/srtm_slope_nooverlap_tiles')
 
