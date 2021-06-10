@@ -21,7 +21,7 @@ class GenCmds(PBPTGenQProcessToolCmds):
             out_cmp_file = os.path.join(kwargs['out_dir'], '{}.txt'.format(basename))
 
             if not os.path.exists(out_cmp_file):
-
+                print('rm {}'.format(tile_img))
                 c_dict = dict()
                 c_dict['basename'] = basename
                 c_dict['base_img'] = tile_img

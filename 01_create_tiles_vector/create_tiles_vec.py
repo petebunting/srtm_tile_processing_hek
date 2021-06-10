@@ -141,6 +141,12 @@ A function which creates a regular grid across a defined area.
             else:
                 bboxs.append([cMinX-overlap, cMaxX+overlap, cMinY-overlap, cMaxY+overlap])
     
+    for bbox in bboxs:
+        if bbox[2] < -180:
+            bbox[2] = -180
+        if bbox[3] > 180:
+            bbox[3] = 180
+    
     createPolyVecBBOXs(outputVec, vecLyrName, vecDriver, epsgCode, bboxs)
     writeVecColumn(outputVec, vecLyrName, tile_names_col, ogr.OFTString, tile_names)
 
