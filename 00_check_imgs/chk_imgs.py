@@ -1,4 +1,6 @@
 import osgeo.gdal as gdal
+import osgeo.osr as osr
+import numpy
 import os
 import argparse
 import glob
@@ -72,7 +74,7 @@ class RSGISGDALErrorHandler(object):
         self.err_msg = err_msg
 
 
-def check_gdal_image_file(gdal_img, check_bands=True, nbands=0):
+def check_gdal_image_file(gdal_img, check_bands=True, nbands=0, chk_proj=False, epsg_code=0, read_img=False):
     """
     A function which checks a GDAL compatible image file and returns an error message if appropriate.
 
@@ -80,6 +82,10 @@ def check_gdal_image_file(gdal_img, check_bands=True, nbands=0):
     :param check_bands: boolean specifying whether individual image bands should be
                         opened and checked (Default: True)
     :param nbands: int specifying the number of expected image bands. Ignored if 0; Default is 0.
+    :param chk_proj: boolean specifying whether to check that the projection has been defined.
+    :param epsg_code: int for the EPSG code for the projection. Error raised if image is not that projection.
+    :param read_img: boolean specifying whether to try reading some image pixel values from the image. 
+                     This option will read 10 random image pixel values from a randomly selected band.
     :return: boolean (True: file ok; False: Error found), string (error message if required otherwise empty string)
 
     """
@@ -106,7 +112,7 @@ def check_gdal_image_file(gdal_img, check_bands=True, nbands=0):
                     if n_img_bands != nbands:
                         file_ok = False
                         err_str = 'Image should have {} image bands but {} found.'.format(nbands, n_img_bands)
-
+                        
                 if file_ok and check_bands:
                     n_img_bands = raster_ds.RasterCount
                     if n_img_bands < 1:
@@ -120,6 +126,45 @@ def check_gdal_image_file(gdal_img, check_bands=True, nbands=0):
                                 file_ok = False
                                 err_str = 'GDAL could not open band {} in the dataset, returned None.'.format(band)
                                 break
+                        
+                if file_ok and chk_proj:
+                    proj_obj = raster_ds.GetProjection()
+                    if proj_obj is None:
+                        file_ok = False
+                        err_str = 'Image projection is None.'
+                    elif proj_obj is '':
+                        file_ok = False
+                        err_str = 'Image projection is empty.'
+                    
+                    if file_ok and (epsg_code > 0)                    
+                        spat_ref = osr.SpatialReference()
+                        spat_ref.ImportFromWkt(proj_obj)            
+                        spat_ref.AutoIdentifyEPSG()
+                        img_epsg_code = spat_ref.GetAuthorityCode(None)
+                        if img_epsg_code is None:
+                            file_ok = False
+                            err_str = 'Image projection returned a None EPSG code.'
+                        elif img_epsg_code != epsg_code
+                            file_ok = False
+                            err_str = 'Image EPSG ({}) does not match that specified ({})'.format(img_epsg_code, epsg_code)
+                            
+                if file_ok and read_img:
+                    n_img_bands = raster_ds.RasterCount
+                    xSize = rasterDS.RasterXSize
+                    ySize = rasterDS.RasterYSize
+                    
+                    if n_img_bands == 1:
+                        band = 1
+                    else:
+                        band = numpy.random.randint(1, high=n_img_bands, size=1)
+       
+                    img_band = raster_ds.GetRasterBand(band)
+                    x_pxls = numpy.random.choice(xSize, 10)
+                    y_pxls = numpy.random.choice(ySize, 10)
+                    for i in range(10):
+                        #print("[{},{}]".format(x_pxls[i], y_pxls[i]))
+                        img_data = img_band.ReadRaster(xoff=x_pxls[i], yoff=y_pxls[i], xsize=1, ysize=1, buf_xsize=1, buf_ysize=1, buf_type=gdal.GDT_Float32)
+                
                 raster_ds = None
         except Exception as e:
             file_ok = False
@@ -140,10 +185,14 @@ def _run_img_chk(img_params):
     nbands = img_params[1]
     rmerr = img_params[2]
     printnames = img_params[3]
+    chk_proj = img_params[4]
+    epsg_code = img_params[5]
+    read_img = img_params[6]
+    
     if printnames:
         print(img)
     try:
-        file_ok, err_str = check_gdal_image_file(img, check_bands=True, nbands=nbands)
+        file_ok, err_str = check_gdal_image_file(img, check_bands=True, nbands=nbands, chk_proj=chk_proj, epsg_code=epsg_code, read_img=read_img)
         if not file_ok:
             if rmerr:
                 os.remove(img)
@@ -165,10 +214,19 @@ if __name__ == "__main__":
     parser.add_argument("--rmerr", action='store_true', default=False, help="Delete error files from system.")
     parser.add_argument("--printnames", action='store_true', default=False, help="Print file names as checking")
     parser.add_argument("--nbands", type=int, default=0, help="Check the number of bands is correct. Ignored if 0; Default.")
+    parser.add_argument("--epsg", type=int, default=0, help="The EPSG code for the projection of the images.")
+    parser.add_argument("--chkproj", action='store_true', default=False, help="Check that a projection is defined")
+    parser.add_argument("--readimg", action='store_true', default=False, help="Check the image by reading part of it.")
+    
 
     args = parser.parse_args()
     print(args.input)
-
+    
+    chk_projection = args.chkproj
+    if (not args.chkproj) and (args.epsg > 0):
+        chk_projection = True
+    
+    
     imgs = glob.glob(args.input)
 
     print("File Checks ({} Files Found):".format(len(imgs)))
@@ -178,9 +236,9 @@ if __name__ == "__main__":
     try:
         for img in imgs:
             try:
-                params = [img, args.nbands, args.rmerr, args.printnames]
+                params = [img, args.nbands, args.rmerr, args.printnames, chk_projection, args.epsg, args.readimg]
                 result = processes_pool.apply_async(_run_img_chk, args=[params])
-                result.get(timeout=1)
+                result.get(timeout=2)
             except Exception as e:
                 if args.rmerr:
                     os.remove(img)
