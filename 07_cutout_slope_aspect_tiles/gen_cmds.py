@@ -29,6 +29,8 @@ class GenCmds(PBPTGenQProcessToolCmds):
             out_aspect_img = os.path.join(kwargs['out_asp_dir'], '{}_aspect.tif'.format(basename))
 
             if (not os.path.exists(out_slope_img)) or (not os.path.exists(out_aspect_img)):
+                print('rm {}'.format(slope_img))
+                print('rm {}'.format(aspect_img))
                 c_dict = dict()
                 c_dict['base_img'] = base_tile_img
                 c_dict['slope_img'] = slope_img
