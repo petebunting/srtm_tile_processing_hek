@@ -185,14 +185,17 @@ def _run_img_chk(img_params):
     nbands = img_params[1]
     rmerr = img_params[2]
     printnames = img_params[3]
-    chk_proj = img_params[4]
-    epsg_code = img_params[5]
-    read_img = img_params[6]
+    printerrs = img_params[4]
+    chk_proj = img_params[5]
+    epsg_code = img_params[6]
+    read_img = img_params[7]
     
     if printnames:
         print(img)
     try:
         file_ok, err_str = check_gdal_image_file(img, check_bands=True, nbands=nbands, chk_proj=chk_proj, epsg_code=epsg_code, read_img=read_img)
+        if printerrs and (not file_ok):
+            print("Error: '{}'".format(err_str))
         if not file_ok:
             if rmerr:
                 os.remove(img)
@@ -213,6 +216,7 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--input", type=str, required=True, help="Input file path")
     parser.add_argument("--rmerr", action='store_true', default=False, help="Delete error files from system.")
     parser.add_argument("--printnames", action='store_true', default=False, help="Print file names as checking")
+    parser.add_argument("--printerrs", action='store_true', default=False, help="Print the error messages for the images")
     parser.add_argument("--nbands", type=int, default=0, help="Check the number of bands is correct. Ignored if 0; Default.")
     parser.add_argument("--epsg", type=int, default=0, help="The EPSG code for the projection of the images.")
     parser.add_argument("--chkproj", action='store_true', default=False, help="Check that a projection is defined")
@@ -236,7 +240,7 @@ if __name__ == "__main__":
     try:
         for img in imgs:
             try:
-                params = [img, args.nbands, args.rmerr, args.printnames, chk_projection, args.epsg, args.readimg]
+                params = [img, args.nbands, args.rmerr, args.printnames, args.printerrs, chk_projection, args.epsg, args.readimg]
                 result = processes_pool.apply_async(_run_img_chk, args=[params])
                 result.get(timeout=2)
             except Exception as e:
