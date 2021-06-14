@@ -74,7 +74,7 @@ class RSGISGDALErrorHandler(object):
         self.err_msg = err_msg
 
 
-def check_gdal_image_file(gdal_img, check_bands=True, nbands=0, chk_proj=False, epsg_code=0, read_img=False):
+def check_gdal_image_file(gdal_img, check_bands=True, nbands=0, chk_proj=False, epsg_code=0, read_img=False, chksum=False):
     """
     A function which checks a GDAL compatible image file and returns an error message if appropriate.
 
@@ -86,6 +86,7 @@ def check_gdal_image_file(gdal_img, check_bands=True, nbands=0, chk_proj=False, 
     :param epsg_code: int for the EPSG code for the projection. Error raised if image is not that projection.
     :param read_img: boolean specifying whether to try reading some image pixel values from the image. 
                      This option will read 10 random image pixel values from a randomly selected band.
+    :param chksum: boolean specifying whether a checksum should be calculated for each band to check validity
     :return: boolean (True: file ok; False: Error found), string (error message if required otherwise empty string)
 
     """
@@ -162,8 +163,12 @@ def check_gdal_image_file(gdal_img, check_bands=True, nbands=0, chk_proj=False, 
                     x_pxls = numpy.random.choice(xSize, 10)
                     y_pxls = numpy.random.choice(ySize, 10)
                     for i in range(10):
-                        #print("[{},{}]".format(x_pxls[i], y_pxls[i]))
                         img_data = img_band.ReadRaster(xoff=int(x_pxls[i]), yoff=int(y_pxls[i]), xsize=1, ysize=1, buf_xsize=1, buf_ysize=1, buf_type=gdal.GDT_Float32)
+
+                if file_ok and chksum:
+                    n_img_bands = raster_ds.RasterCount
+                    for n in range(n_img_bands):
+                        raster_ds.GetRasterBand(n+1).Checksum()
                 
                 raster_ds = None
         except Exception as e:
@@ -180,6 +185,7 @@ def check_gdal_image_file(gdal_img, check_bands=True, nbands=0, chk_proj=False, 
         err_str = 'File does not exist.'
     return file_ok, err_str
 
+
 def _run_img_chk(img_params):
     img = img_params[0]
     nbands = img_params[1]
@@ -189,11 +195,12 @@ def _run_img_chk(img_params):
     chk_proj = img_params[5]
     epsg_code = img_params[6]
     read_img = img_params[7]
+    chksum = img_params[8]
     
     if printnames:
         print(img)
     try:
-        file_ok, err_str = check_gdal_image_file(img, check_bands=True, nbands=nbands, chk_proj=chk_proj, epsg_code=epsg_code, read_img=read_img)
+        file_ok, err_str = check_gdal_image_file(img, check_bands=True, nbands=nbands, chk_proj=chk_proj, epsg_code=epsg_code, read_img=read_img, chksum=chksum)
         if printerrs and (not file_ok):
             print("Error: '{}'".format(err_str))
         if not file_ok:
@@ -221,7 +228,7 @@ if __name__ == "__main__":
     parser.add_argument("--epsg", type=int, default=0, help="The EPSG code for the projection of the images.")
     parser.add_argument("--chkproj", action='store_true', default=False, help="Check that a projection is defined")
     parser.add_argument("--readimg", action='store_true', default=False, help="Check the image by reading part of it.")
-    
+    parser.add_argument("--chksum", action='store_true', default=False, help="Check the image by calculating a checksum for each band.")
 
     args = parser.parse_args()
     print(args.input)
@@ -240,7 +247,7 @@ if __name__ == "__main__":
     try:
         for img in imgs:
             try:
-                params = [img, args.nbands, args.rmerr, args.printnames, args.printerrs, chk_projection, args.epsg, args.readimg]
+                params = [img, args.nbands, args.rmerr, args.printnames, args.printerrs, chk_projection, args.epsg, args.readimg, args.chksum]
                 result = processes_pool.apply_async(_run_img_chk, args=[params])
                 result.get(timeout=2)
             except Exception as e:
