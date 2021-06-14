@@ -136,7 +136,7 @@ def check_gdal_image_file(gdal_img, check_bands=True, nbands=0, chk_proj=False, 
                         file_ok = False
                         err_str = 'Image projection is empty.'
                     
-                    if file_ok and (epsg_code > 0)                    
+                    if file_ok and (epsg_code > 0):
                         spat_ref = osr.SpatialReference()
                         spat_ref.ImportFromWkt(proj_obj)            
                         spat_ref.AutoIdentifyEPSG()
@@ -144,26 +144,26 @@ def check_gdal_image_file(gdal_img, check_bands=True, nbands=0, chk_proj=False, 
                         if img_epsg_code is None:
                             file_ok = False
                             err_str = 'Image projection returned a None EPSG code.'
-                        elif img_epsg_code != epsg_code
+                        elif int(img_epsg_code) != int(epsg_code):
                             file_ok = False
                             err_str = 'Image EPSG ({}) does not match that specified ({})'.format(img_epsg_code, epsg_code)
                             
                 if file_ok and read_img:
                     n_img_bands = raster_ds.RasterCount
-                    xSize = rasterDS.RasterXSize
-                    ySize = rasterDS.RasterYSize
+                    xSize = raster_ds.RasterXSize
+                    ySize = raster_ds.RasterYSize
                     
                     if n_img_bands == 1:
                         band = 1
                     else:
-                        band = numpy.random.randint(1, high=n_img_bands, size=1)
+                        band = int(numpy.random.randint(1, high=n_img_bands, size=1))
        
                     img_band = raster_ds.GetRasterBand(band)
                     x_pxls = numpy.random.choice(xSize, 10)
                     y_pxls = numpy.random.choice(ySize, 10)
                     for i in range(10):
                         #print("[{},{}]".format(x_pxls[i], y_pxls[i]))
-                        img_data = img_band.ReadRaster(xoff=x_pxls[i], yoff=y_pxls[i], xsize=1, ysize=1, buf_xsize=1, buf_ysize=1, buf_type=gdal.GDT_Float32)
+                        img_data = img_band.ReadRaster(xoff=int(x_pxls[i]), yoff=int(y_pxls[i]), xsize=1, ysize=1, buf_xsize=1, buf_ysize=1, buf_type=gdal.GDT_Float32)
                 
                 raster_ds = None
         except Exception as e:
